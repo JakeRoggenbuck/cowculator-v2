@@ -30,7 +30,10 @@ export default function Page() {
                 (1 - dietDistribution.seaweed * 0.02)) / // Seaweed reduces emissions by roughly 2% per 1% included
             100;
 
-        const dailyEmission = Math.max(baseEmission * cattleCount * seasonMultiplier * dietMultiplier, 0);
+        const dailyEmission = Math.max(
+            baseEmission * cattleCount * seasonMultiplier * dietMultiplier,
+            0,
+        );
         return {
             daily: dailyEmission.toFixed(2),
             monthly: (dailyEmission * 30).toFixed(2),
@@ -49,7 +52,7 @@ export default function Page() {
                         CowCulator AI
                     </h1>
                     <p className="text-gray-400 text-xl">
-                        Advanced Cattle Methane Emission Estimation System
+                        Cattle Methane Emission Estimation System
                     </p>
                 </div>
 
@@ -89,7 +92,9 @@ export default function Page() {
                                 <span className="text-gray-400 capitalize">
                                     {food === 'seaweed' ? 'Red Seaweed' : food}
                                 </span>
-                                <span className="ml-2">{percentage}%</span>
+                                <span className={`ml-2 ${percentage > 20 && food == "seaweed" ? 'text-red-300' : ''}`}>
+                                    {percentage}%
+                                </span>
                                 <input
                                     type="range"
                                     min="0"
