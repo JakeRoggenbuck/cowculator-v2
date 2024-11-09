@@ -15,7 +15,8 @@ export default function Page() {
     // Simplified calculation - these would need to be refined with actual scientific data
     const calculateMethane = () => {
         const baseEmission = 0.25; // base m³ per cow per day
-        const seasonMultiplier = {
+
+        let seasonMultiplier = {
             summer: 1.2,
             winter: 0.8,
             spring: 1.0,
@@ -36,6 +37,10 @@ export default function Page() {
                 dietDistribution.grass * 1.0) *
                 (1 - dietDistribution.seaweed * 0.02)) /
             100;
+
+		if (seasonMultiplier === undefined) {
+			seasonMultiplier = 1.0;
+		}
 
         const dailyEmissionNoSeaweed = Math.max(
             baseEmission * cattleCount * seasonMultiplier * dietMultiplierNoSeaweed,
