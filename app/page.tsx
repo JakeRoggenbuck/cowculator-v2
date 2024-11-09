@@ -158,15 +158,6 @@ export default function Page() {
                                 <option value="fall">Fall</option>
                             </select>
                         </label>
-
-                        <div className="flex flex-col items-center space-y-2">
-                            <span className="text-gray-300 text-lg">Environmental Grade</span>
-                            <div className={`${grade.bgColor} px-6 py-3 rounded-lg`}>
-                                <span className={`text-4xl font-bold ${grade.color}`}>
-                                    {grade.grade}
-                                </span>
-                            </div>
-                        </div>
                     </div>
 
                     <div className="space-y-4">
@@ -225,15 +216,27 @@ export default function Page() {
                     ))}
                 </div>
 
-                {/* Info Card */}
-                <div className="bg-gray-800/30 p-6 rounded-xl text-sm text-gray-400">
-                    <p>
-                        This calculator provides estimates based on simplified models. Actual
-                        methane emissions may vary based on additional factors such as animal age,
-                        health, and specific feed compositions. Red seaweed (Asparagopsis
-                        taxiformis) has been shown to significantly reduce methane emissions in
-                        cattle when used as a feed supplement.
-                    </p>
+                {/* Info Card and Grade */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-800/30 p-8 rounded-xl h-full flex items-center">
+                        <p className="text-sm text-gray-400 leading-relaxed">
+                            This calculator provides estimates based on simplified models. Actual
+                            methane emissions may vary with factors like animal age, health, and
+                            feed composition. Red seaweed (Asparagopsis taxiformis) can
+                            significantly reduce methane emissions in cattle when used as a feed
+                            supplement.
+                        </p>
+                    </div>
+                    <div className="bg-gray-800/30 p-8 rounded-xl h-full flex flex-col items-center justify-center">
+                        <span className="text-gray-300 text-lg mb-3">
+                            Environmental Impact Grade
+                        </span>
+                        <div className={`${grade.bgColor} px-8 py-4 rounded-lg`}>
+                            <span className={`text-5xl font-bold ${grade.color}`}>
+                                {grade.grade}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
