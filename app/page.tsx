@@ -38,9 +38,9 @@ export default function Page() {
                 (1 - dietDistribution.seaweed * 0.02)) /
             100;
 
-		if (seasonMultiplier === undefined) {
-			seasonMultiplier = 1.0;
-		}
+        if (seasonMultiplier === undefined) {
+            seasonMultiplier = 1.0;
+        }
 
         const dailyEmissionNoSeaweed = Math.max(
             baseEmission * cattleCount * seasonMultiplier * dietMultiplierNoSeaweed,
@@ -68,7 +68,55 @@ export default function Page() {
         };
     };
 
+    const getEmissionGrade = () => {
+        if (cattleCount === 0)
+            return {
+                grade: 'N/A',
+                color: 'text-gray-400',
+                bgColor: 'bg-gray-400/10',
+            };
+
+        const emissionsPerCow = parseFloat(calculateMethane().daily.with) / cattleCount;
+
+        if (emissionsPerCow <= 0.15)
+            return {
+                grade: 'A',
+                color: 'text-green-400',
+                bgColor: 'bg-green-400/10',
+            };
+        if (emissionsPerCow <= 0.2)
+            return {
+                grade: 'B',
+                color: 'text-emerald-400',
+                bgColor: 'bg-emerald-400/10',
+            };
+        if (emissionsPerCow <= 0.25)
+            return {
+                grade: 'C',
+                color: 'text-yellow-400',
+                bgColor: 'bg-yellow-400/10',
+            };
+        if (emissionsPerCow <= 0.3)
+            return {
+                grade: 'D',
+                color: 'text-orange-400',
+                bgColor: 'bg-orange-400/10',
+            };
+        if (emissionsPerCow <= 0.35)
+            return {
+                grade: 'E',
+                color: 'text-red-300',
+                bgColor: 'bg-red-300/10',
+            };
+        return {
+            grade: 'F',
+            color: 'text-red-500',
+            bgColor: 'bg-red-500/10',
+        };
+    };
+
     const results = calculateMethane();
+    const grade = getEmissionGrade();
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-8">
@@ -85,7 +133,7 @@ export default function Page() {
 
                 {/* Input Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-800/50 p-6 rounded-xl backdrop-blur-sm">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <label className="block">
                             <span className="text-gray-300">Number of Cattle</span>
                             <input
@@ -110,6 +158,15 @@ export default function Page() {
                                 <option value="fall">Fall</option>
                             </select>
                         </label>
+
+                        <div className="flex flex-col items-center space-y-2">
+                            <span className="text-gray-300 text-lg">Environmental Grade</span>
+                            <div className={`${grade.bgColor} px-6 py-3 rounded-lg`}>
+                                <span className={`text-4xl font-bold ${grade.color}`}>
+                                    {grade.grade}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="space-y-4">
