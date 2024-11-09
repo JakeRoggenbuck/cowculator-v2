@@ -9,7 +9,7 @@ export default function Page() {
         hay: 65,
         corn: 20,
         grass: 10,
-        seaweed: 5, // Added red seaweed with initial 5%
+        seaweed: 5,
     });
 
     // Simplified calculation - these would need to be refined with actual scientific data
@@ -22,22 +22,44 @@ export default function Page() {
             fall: 1.0,
         }[season];
 
-        // Updated calculation to account for seaweed's methane-reducing properties
-        const dietMultiplier =
+        // Calculate without seaweed
+        const dietMultiplierNoSeaweed =
+            (dietDistribution.hay * 1.1 +
+                dietDistribution.corn * 0.9 +
+                dietDistribution.grass * 1.0) /
+            (100 - dietDistribution.seaweed); // Normalize to 100%
+
+        // Calculate with seaweed
+        const dietMultiplierWithSeaweed =
             ((dietDistribution.hay * 1.1 +
                 dietDistribution.corn * 0.9 +
                 dietDistribution.grass * 1.0) *
-                (1 - dietDistribution.seaweed * 0.02)) / // Seaweed reduces emissions by roughly 2% per 1% included
+                (1 - dietDistribution.seaweed * 0.02)) /
             100;
 
-        const dailyEmission = Math.max(
-            baseEmission * cattleCount * seasonMultiplier * dietMultiplier,
+        const dailyEmissionNoSeaweed = Math.max(
+            baseEmission * cattleCount * seasonMultiplier * dietMultiplierNoSeaweed,
             0,
         );
+
+        const dailyEmissionWithSeaweed = Math.max(
+            baseEmission * cattleCount * seasonMultiplier * dietMultiplierWithSeaweed,
+            0,
+        );
+
         return {
-            daily: dailyEmission.toFixed(2),
-            monthly: (dailyEmission * 30).toFixed(2),
-            yearly: (dailyEmission * 365).toFixed(2),
+            daily: {
+                without: dailyEmissionNoSeaweed.toFixed(2),
+                with: dailyEmissionWithSeaweed.toFixed(2),
+            },
+            monthly: {
+                without: (dailyEmissionNoSeaweed * 30).toFixed(2),
+                with: (dailyEmissionWithSeaweed * 30).toFixed(2),
+            },
+            yearly: {
+                without: (dailyEmissionNoSeaweed * 365).toFixed(2),
+                with: (dailyEmissionWithSeaweed * 365).toFixed(2),
+            },
         };
     };
 
@@ -49,7 +71,7 @@ export default function Page() {
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                        CowCulator AI
+                        CowCulator v2
                     </h1>
                     <p className="text-gray-400 text-xl">
                         Cattle Methane Emission Estimation System
@@ -63,7 +85,7 @@ export default function Page() {
                             <span className="text-gray-300">Number of Cattle</span>
                             <input
                                 type="number"
-                                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white px-4 py-2"
                                 value={cattleCount || ''}
                                 placeholder="0"
                                 onChange={(e) => setCattleCount(Number(e.target.value))}
@@ -73,7 +95,7 @@ export default function Page() {
                         <label className="block">
                             <span className="text-gray-300">Season</span>
                             <select
-                                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white px-4 py-2"
                                 value={season}
                                 onChange={(e) => setSeason(e.target.value)}
                             >
@@ -92,7 +114,9 @@ export default function Page() {
                                 <span className="text-gray-400 capitalize">
                                     {food === 'seaweed' ? 'Red Seaweed' : food}
                                 </span>
-                                <span className={`ml-2 ${percentage > 20 && food == "seaweed" ? 'text-red-300' : ''}`}>
+                                <span
+                                    className={`ml-2 ${percentage > 20 && food == 'seaweed' ? 'text-red-300' : ''}`}
+                                >
                                     {percentage}%
                                 </span>
                                 <input
@@ -115,13 +139,26 @@ export default function Page() {
 
                 {/* Results Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Object.entries(results).map(([period, value]) => (
+                    {Object.entries(results).map(([period, values]) => (
                         <div
                             key={period}
                             className="bg-gray-800/50 p-6 rounded-xl backdrop-blur-sm"
                         >
-                            <h3 className="text-gray-400 capitalize mb-2">{period} Emissions</h3>
-                            <p className="text-2xl font-bold text-emerald-400">{value} m³</p>
+                            <h3 className="text-gray-400 capitalize mb-4">{period} Emissions</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-sm text-gray-400">Without Red Seaweed:</p>
+                                    <p className="text-2xl font-bold text-emerald-400">
+                                        {values.without} m³
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">With Red Seaweed:</p>
+                                    <p className="text-2xl font-bold text-cyan-400">
+                                        {values.with} m³
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
