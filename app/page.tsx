@@ -6,9 +6,10 @@ export default function Page() {
     const [cattleCount, setCattleCount] = useState(0);
     const [season, setSeason] = useState('summer');
     const [dietDistribution, setDietDistribution] = useState({
-        hay: 70,
+        hay: 65,
         corn: 20,
         grass: 10,
+        seaweed: 5, // Added red seaweed with initial 5%
     });
 
     // Simplified calculation - these would need to be refined with actual scientific data
@@ -21,10 +22,12 @@ export default function Page() {
             fall: 1.0,
         }[season];
 
+        // Updated calculation to account for seaweed's methane-reducing properties
         const dietMultiplier =
-            (dietDistribution.hay * 1.1 +
+            ((dietDistribution.hay * 1.1 +
                 dietDistribution.corn * 0.9 +
-                dietDistribution.grass * 1.0) /
+                dietDistribution.grass * 1.0) *
+                (1 - dietDistribution.seaweed * 0.02)) / // Seaweed reduces emissions by roughly 2% per 1% included
             100;
 
         const dailyEmission = baseEmission * cattleCount * seasonMultiplier * dietMultiplier;
@@ -58,7 +61,8 @@ export default function Page() {
                             <input
                                 type="number"
                                 className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
-                                value={cattleCount}
+                                value={cattleCount || ''}
+                                placeholder="0"
                                 onChange={(e) => setCattleCount(Number(e.target.value))}
                             />
                         </label>
@@ -82,8 +86,9 @@ export default function Page() {
                         <h3 className="text-gray-300">Diet Distribution (%)</h3>
                         {Object.entries(dietDistribution).map(([food, percentage]) => (
                             <label key={food} className="block">
-                                <span className="text-gray-400 capitalize">{food}</span>
-
+                                <span className="text-gray-400 capitalize">
+                                    {food === 'seaweed' ? 'Red Seaweed' : food}
+                                </span>
                                 <span className="ml-2">{percentage}%</span>
                                 <input
                                     type="range"
@@ -121,7 +126,9 @@ export default function Page() {
                     <p>
                         This calculator provides estimates based on simplified models. Actual
                         methane emissions may vary based on additional factors such as animal age,
-                        health, and specific feed compositions.
+                        health, and specific feed compositions. Red seaweed (Asparagopsis
+                        taxiformis) has been shown to significantly reduce methane emissions in
+                        cattle when used as a feed supplement.
                     </p>
                 </div>
             </div>
