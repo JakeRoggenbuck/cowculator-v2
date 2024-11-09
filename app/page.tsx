@@ -30,7 +30,7 @@ export default function Page() {
                 (1 - dietDistribution.seaweed * 0.02)) / // Seaweed reduces emissions by roughly 2% per 1% included
             100;
 
-        const dailyEmission = baseEmission * cattleCount * seasonMultiplier * dietMultiplier;
+        const dailyEmission = Math.max(baseEmission * cattleCount * seasonMultiplier * dietMultiplier, 0);
         return {
             daily: dailyEmission.toFixed(2),
             monthly: (dailyEmission * 30).toFixed(2),
