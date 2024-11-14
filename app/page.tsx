@@ -238,6 +238,9 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
+			<div>
+				<p className="font-bold underline text-cyan-400"><a href="https://forms.gle/Lr3zY2AEwErUmSeN7">Feedback Form</a></p>
+			</div>
             </div>
         </div>
     );
